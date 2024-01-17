@@ -3,7 +3,7 @@ name: New PR
 on:
   pull_request_target:
     branches:
-      - main
+      - release
     types: [opened]
 
 env:
@@ -13,6 +13,9 @@ env:
 jobs:
   add-comment:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -22,13 +25,13 @@ jobs:
           gh pr comment "$PR_NUMBER" --body "Thank you for your contribution, our team will be reviewing this shortly, please be available for any follow up questions or code review feedback!"
 
       - id: file_changes
-        uses: trilom/file-changes-action@v1.2.4
+        uses: tj-actions/changed-files@v41
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
       - name: Label PR based on Changes
         env:
-          FILES_ADDED: ${{ steps.file_changes.outputs.files_added }}
-          FILES_MODIFIED: ${{ steps.file_changes.outputs.files_modified }}
+          FILES_ADDED: ${{ steps.file_changes.outputs.added_files }}
+          FILES_MODIFIED: ${{ steps.file_changes.outputs.modified_files }}
         run: |
           echo "$FILES_ADDED"
           if [[ "$FILES_ADDED" =~ "config.yml" ]]; then
