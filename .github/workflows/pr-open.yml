@@ -13,9 +13,6 @@ env:
 jobs:
   add-comment:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: read
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
